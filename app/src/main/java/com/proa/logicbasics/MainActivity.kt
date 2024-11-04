@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,11 +31,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.proa.logicbasics.ui.theme.LogicbasicsTheme
 
@@ -51,7 +57,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Inicio() {
     val navController = rememberNavController() // Cria uma instância do NavController
@@ -59,52 +64,16 @@ fun Inicio() {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF424242), titleContentColor = Color.White),
-                title = {
-                    Text(
-                        "Metric Genius",
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
-                    )
-                })
-
+            Header()
         },
         content = { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-                    .background(Color(0xFF424242)),
-                verticalArrangement = Arrangement.spacedBy(16.dp, alignment = Alignment.CenterVertically),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Button(
-                    onClick = {}, modifier = Modifier
-                        .width(175.dp)
-                        .height(75.dp),
-                    shape = RoundedCornerShape(50.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFAF7F8D)
-                    )
-                ) {
-                    Text("Logar", fontSize = 22.sp)
-                }
-
-                Button(onClick = {},modifier = Modifier.width(175.dp).height(75.dp), shape = RoundedCornerShape(50.dp), colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFAF7F8D)
-                )) {
-                    Text("Registrar", fontSize = 22.sp)
-                }
+            NavHost(navController = navController, startDestination = "home") {
+                composable("home") { Home(navController, innerPadding)}
+                composable("login") { /* IMPLEMENT SCREEN */ }
+                composable("register") { /* IMPLEMENT SCREEN */ }
 
             }
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = { /* Ação do FAB */ }) {
-                Icon(Icons.Default.Menu, contentDescription = "Adicionar")
-                // Icone padrão do Material Design, mas pode ser substituído por qualquer coisa
-                // Consultar mais ícones em https://material.io/resources/icons/
-            }
+
         },
         bottomBar = {
         }
@@ -117,24 +86,64 @@ fun ConteudoCirculo(navController: NavController) {
 }
 
 @Composable
-fun ConteudoLogin(navController: NavController, innerPadding: PaddingValues) {
-    Text(
-        text = "Bem-vindo ao Portal das Formas"
-    )
-
-    Button(
-        onClick = {
-            navController.navigate("home")
-        },
-        modifier = Modifier.padding(16.dp)
-    ) {
-        Text("Login")
-    }
+@OptIn(ExperimentalMaterial3Api::class)
+fun Header() {
+    TopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF424242), titleContentColor = Color.White),
+        title = {
+            Text(
+                "Metric Genius",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                fontSize = 32.sp,
+                fontWeight = FontWeight(700)
+            )
+        })
 }
 
 @Composable
-fun Home(navController: NavController) {
-    Text("Teste")
+fun Home(navController: NavController, paddingValues: PaddingValues) {
+    Column(
+        modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize()
+            .background(Color(0xFF424242)),
+        verticalArrangement = Arrangement.spacedBy(16.dp, alignment = Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.logo), // Certifique-se de que o nome está em minúsculas
+            contentDescription = "image description",
+            contentScale = ContentScale.Fit, // Ajuste para testar
+            modifier = Modifier
+                .width(250.dp)
+                .height(250.dp)
+                .background(color = Color(0xFF424242))
+        )
+
+        Button(
+            onClick = {navController.navigate("login")}, modifier = Modifier
+                .width(175.dp)
+                .height(75.dp),
+            shape = RoundedCornerShape(50.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFFAF7F8D)
+            )
+        ) {
+            Text("Logar", fontSize = 22.sp)
+        }
+
+        Button(
+            onClick = {navController.navigate("register")},
+            modifier = Modifier
+                .width(175.dp)
+                .height(75.dp),
+            shape = RoundedCornerShape(50.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFAF7F8D))
+        ) {
+            Text("Registrar", fontSize = 22.sp)
+        }
+    }
 }
 
 @Preview(showBackground = true)
